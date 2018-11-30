@@ -1,0 +1,57 @@
+
+<%- include partials/header %>
+
+<body>
+
+	<div class="content">
+
+		<div class="container col" style="margin: 100px 0px;">
+
+			<div class="row  justify-content-md-center outerdiv" style="margin-bottom: 10px;">
+				<form action="/selection" method="POST" >
+					<div class="row">
+						<div class="btn-group dropright">
+							<button type="submit" class="btn btn-secondary">
+								Show
+							</button>
+							<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="sr-only">Toggle Dropright</span>
+							</button>
+							<div class="dropdown-menu" data-toggle="dropdown">
+								<select id="list" class="form-control  text-center" name="selection" multiple="true">
+									<% for(let i = 0;i<tables.length; i++){ %>
+									<option value="<%= i %>" > <%= tables[i] %> </option>	
+									<% }; %>
+								</select>
+							</div>
+
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="row justify-content-md-center outerdiv">
+				<table class="table table-bordered">
+							<thead>
+								<% let columns = Object.keys(data[0]); %>
+										<tr>
+										<% for(i in columns){ %>
+											<th> <%= columns[i].toUpperCase(); %></th>
+										<% }; %>
+										</tr>
+							</thead>
+								<% data.forEach(function(data){ %>
+									<tbody>
+										<tr>
+										<% for(i in columns){ %>
+											<td><%= data[columns[i]] %></td>
+										<% }; %>
+										</tr>
+								<% }); %>
+									</tbody>
+				</table>
+			</div>
+		</div>	
+	</div>
+</body>
+ <%- include partials/footer %>
+

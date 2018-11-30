@@ -1,0 +1,62 @@
+<%- include partials/header %>
+
+<body>
+    <% /* <div class="content">
+						<form action="/new" method="POST">
+							<div class="form-group">
+								<label for="id">Course ID</label>
+								<input type="text" class="form-control" name="id" placeholder="Enter Course ID">
+							</div>
+							<div class="form-group">
+								<label for="course_name">Course Name</label>
+								<input type="text" class="form-control" name="course_name" placeholder="Enter Course Name">
+							</div>
+								<div class="form-group">
+								<label for="mark">Grade</label>
+								<input type="text" class="form-control" name="mark" placeholder="Enter mark">
+							</div>
+							<button type="submit" class="btn btn-primary col-md-4">Submit</button>
+						</form>
+    </div> */%>
+<div class="content2">
+	<div class="col">
+<div class="row  justify-content-md-center outerdiv" style="margin-bottom: 10px;">
+				<form action="/selection" method="POST" >
+					<div class="row">
+						<div class="btn-group dropright">
+							<button type="submit" class="btn btn-secondary">
+								Use
+							</button>
+							<button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<span class="sr-only">Toggle Dropright</span>
+							</button>
+							<div class="dropdown-menu" data-toggle="dropdown">
+								<select id="list" class="form-control  text-center" name="selection" multiple="true">
+									<% for(let i = 0;i<tables.length; i++){ %>
+									<option value="<%= i %>" > <%= tables[i] %> </option>	
+									<% }; %>
+								</select>
+							</div>
+
+						</div>
+					</div>
+				</form>
+			</div>
+
+
+				<form action="/new" method="POST">
+							<% for(i in cols){  %>
+									<div class="form-group">
+											<label> <%= cols[i] %></label>
+											<input type="text" class="form-control" name="<%= cols[i] %>" placeholder="Enter <%= cols[i] %>">
+									</div>
+							<% }; %>
+							<div style="text-align: center;">
+								<button type="submit" class="btn btn-primary col-md-4" value="insert">Submit</button>
+								<button type="submit" class="btn btn-danger col-md-4" value="delete">Delete</button>
+							</div>
+				</form>
+ </div>
+</div>
+</body>
+<%- include partials/footer %>

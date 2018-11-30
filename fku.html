@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<title>Kos</title>
+
+<!-- Styles -->	
+<style>
+
+.example1 {
+ height: 50px;	
+ overflow: hidden;
+ position: relative;
+ height: 100vh;
+}
+.example1 h3 {
+ font-size: 3em;
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ margin: 0;
+ line-height: 50px;
+ text-align: top;
+ /* Starting position */
+ -moz-transform:translateX(100%);
+ -webkit-transform:translateX(100%);	
+ transform:translateX(100%);
+ /* Apply animation to this element */	
+ animation: example1 2s linear infinite;
+ font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+body{
+    animation: bganimate 2s linear infinite;
+}
+@keyframes example1 {
+ 0%   { color: rgb(255, 0, 0); transform: translateX(100%); }
+14.2% {color: rgb(255, 72, 0);}
+28.4% {color: rgb(251, 255, 0);}
+42.8% {color: rgb(0, 255, 0);}
+57.0% {color: rgb(0, 17, 255);}
+71.2% {color: rgb(140, 0, 255);}
+85.4% {color: rgb(255, 0, 242);}
+100% {color: rgb(254, 254, 254);transform: translateY(85%);}
+}
+@keyframes bganimate{
+100%   { background-color: rgb(255, 0, 0);}
+85.4% {background-color: rgb(255, 80, 0);}
+71.2% {background-color: rgb(251, 255, 0);}
+57.0% {background-color: rgb(0, 255, 0);}
+42.8% {background-color: rgb(0, 17, 255);}
+28.4% {background-color: rgb(140, 0, 255);}
+14.2% {background-color: rgb(255, 0, 242);}
+0%    {background-color: rgb(254, 254, 254);}
+}
+
+</style>
+
+<!-- HTML -->	
+<div class="example1">
+<h3>Muddaasrhooooore </h3>
+</div>

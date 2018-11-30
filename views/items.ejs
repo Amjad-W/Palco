@@ -1,0 +1,53 @@
+<%- include partials/header %>
+<div class="content2">
+
+<h1> List of Items </h3>
+
+<div class="row">
+
+        <div class="col-sm-1"></div>
+        <form method="POST" action="/order">
+        <div class="form-group" style="display: flex;">
+            <div class="input-group">
+                <select class="custom-select" name="filter">
+                    <option selected disabled hidden>Filter By</option>
+                    <option default value="0">All</option>
+                    <% brand.forEach( (brand) => {  %>
+                    <option value="<%= brand.brand_id %>"><%= brand.name %></option>
+                    <% }); %>
+                </select>
+
+                <select class="custom-select" name="sort">
+                    <option selected disabled hidden>Sort By</option>
+                    <option default value="item_name">Name</option>
+                    <option value="price">Price</option>
+                </select>
+                <div class="input-group-append">
+                    <button class="input-group-text" type="submit">Go</label>
+                </div>
+            </div>
+        </div>
+        </form>
+
+</div>
+  
+
+<div class="row">
+    <% result.forEach((result)=>{ %>
+        <div class="card-deck col-sm-6 col-md-4 col-lg-4">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top img-fluid" src="items/<%= result.img_path %>" alt="Card image cap">
+                <div class="card-body">
+                    <p class="card-text"><%= result.item_name %></p>
+                    <p class="card-text"><%= result.price %>$</p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-muted">In Stock: <%= result.av_quantity %></small>
+                </div>
+            </div>
+        </div>
+    <% }); %>
+    </div>
+</div>
+
+<%- include partials/footer %>
