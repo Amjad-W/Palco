@@ -29,6 +29,9 @@
 
               <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
+                  <a class="nav-link" href="#"> <% if(auth){ %> <%= auth.cuser %> <% } %> </a>
+                </li>
+                <li class="nav-item">
                   <a class="nav-link" href="/">Home</a>
                 </li>
                 <li class="nav-item">
