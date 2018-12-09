@@ -3,10 +3,11 @@ const express = require("express");
 const mysql = require("mysql");
 const path    = require("path");
 const bp = require("body-parser");
-const flash = require("express-flash");
+const flash = require("req-flash");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const validator = require("express-validator");
 const app = express();
 
 //Variables
@@ -24,7 +25,8 @@ app.use(session({secret: 'keyboard cat',
                 resave: 'true'}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
+app.use(flash({locals: 'flash'}));
+app.use(validator());
 
 //SQL Connection
 const db = mysql.createConnection({
@@ -57,7 +59,8 @@ db.query("SELECT * FROM brand", (err,results) => {
 //Passport.js
 
 app.use(function(req,res,next){
-res.locals.loginFlash = req.flash('loginMessage',"Test Flash");
+    res.locals.regsucc = req.flash('regsucc');
+    res.locals.regfail = req.flash('reqfail');
 next();
 });
 
@@ -70,7 +73,7 @@ next();
 passport.deserializeUser(function(customer_id, done) {
     let sql = "select * from customer where customer_id = ?"
     db.query(sql,customer_id, function(err,rows){
-        console.log("test: "+rows);
+        console.log("test: "+rows[0].cuser);
         done(err, rows[0]);
     });
 });
@@ -98,6 +101,7 @@ passport.use(new LocalStrategy({
         return done(null, rows[0]);			
     });
 }));
+
 //Routes
 app.get("/",(req,res) => {
     if(req.user)
@@ -123,6 +127,48 @@ app.post("/login", passport.authenticate('local', {
     failureFlash: true })
 );
 
+app.post("/register", (req,res) => {
+    var customer_id = null,
+        cuser = req.body.cuser;
+        cpass = req.body.cpass;
+        email = req.body.email;
+        ship_addr = req.body.ship_addr;
+        phone = req.body.phone;
+
+        req.checkBody("cuser","Username is required").notEmpty();
+        req.checkBody("cpass","Password is required").notEmpty();
+        req.checkBody("email","E-mail is required").notEmpty();
+        req.checkBody("email","E-mail is invalid").isEmail();
+        req.checkBody("ship_addr","Shipping address is required").notEmpty();
+        req.checkBody("phone","Buissness phone is required").notEmpty();
+        
+        // ship_addr = ship_addr.replace(",","/,");
+
+        var errors = req.validationErrors();
+        if(errors)
+         res.render("register",{errors:errors});
+         else
+         {
+            let data = {customer_id,cuser,cpass,email,ship_addr,phone};
+            console.log(data);
+            let sql = "insert into customer set ?"
+            db.query(sql,[data],(err,result)=>{
+                if(err){
+                    console.log(err);
+                    console.log("fail");
+                    req.flash("regfail","Username in use");
+                }
+                else
+                {
+                    console.log("succ");
+                    req.flash("regsucc","Registration Succesfull :)");
+                }
+                console.log()
+                res.render("register",{flash: res.locals.flash});
+            }); 
+         }
+});
+
 app.post("/selection", (req,res) => {
     selected = parseInt(req.body.selection);
     backURL=req.header('Referer') || '/';
@@ -139,6 +185,13 @@ app.post("/new", (req,res) =>{
         });
 });
 
+app.get("/register", (req,res)=>{
+    let sql = "select * from customer where customer_id = 1";
+    let query = db.query(sql,(err,result)=>{
+        if(err) console.log(err);
+        else res.render("register");
+    });
+});
 
 app.get("/order", (req,res)=>{
     let sql = 0;
@@ -152,7 +205,7 @@ app.get("/order", (req,res)=>{
         db.query(sql, (err,result) =>{
             if(err) console.log(err);
             else{
-                res.render("items",{result: result, brand: brands});
+                res.render("items",{result: result, brand: brands,auth: req.user});
             }
         }); 
 

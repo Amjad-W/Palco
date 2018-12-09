@@ -64,6 +64,8 @@ nav {
     background:#fec400;
 }
 
+/* content */
+
 .content {
     text-align: center;
     color: black;
@@ -95,10 +97,12 @@ thead {
     color: white;
 }
 
+/* login */
 .login-border {
     background: rgba(256,256,256,0.7);
     padding: 40px;
     border-radius: 40px;
+    margin: 50px;
 }
 
 .login-border h2 {
@@ -108,6 +112,10 @@ thead {
 .login-border button{
     background-color: #4cf58abe;
     color: black;
+}
+
+#login-wrapper{
+    min-height: calc(100vh - 100px);
 }
 /* footer */
 #footer {
