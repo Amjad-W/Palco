@@ -1,0 +1,97 @@
+<%- include partials/header %>
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <ul class="list-group">
+                <li class="nav-item">
+                    <a href="/dash" class="nav-link" >User Profile</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/sales" class="nav-link" >Recent Purchases</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/curr_orders" class="nav-link" >Current Orders</a>
+                </li>
+                <% if(auth.access > 2)  { %>
+                <li class="nav-item">
+                    <a href="/report" class="nav-link" >Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link" >Admin Edit</a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="scroll" class="w-100">
+            <div class="content2">
+                <div class="col-md-12">
+                    <div class="header">
+                        <h2 class="title">Sales Report</h4>
+                        <h4> Item Data </h2>
+                    
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <form method="POST" action="/report">
+                                <select class="text-center custom-select w-75" name="item_id">
+                                    <option value="0"> All </option>
+                                    <% items.forEach((item)=>{ %>
+                                    <option value="<%= item.item_id %>" > <%= item.item_name %> </option>
+                                    <% }); %>
+                                </select>
+                                <button class="btn" type="submit">Find</button>
+                            </form>
+                        </div>
+                        <% if(typeof meta !== "undefined" ) { %>
+                        <div class="col-md-3">
+                            <strong> Total Sales: <%= meta.total_sales %> </strong>
+                        </div>
+                        <div class="col-md-3">
+                            <strong> Average Sales: <%= meta.avg_sales %> </strong>
+                        </div>
+                        <% } %>
+                    </div>
+                    <table class="table table-hover table-bordered table-responsive-md" id="salesTable">
+                        <thead>
+                            <th>Username</th>
+                            <th>Item Name</th>
+                            <th>Unit Price</th>
+                            <th>Quantity</th>
+                            <th>Available</th>
+                            <th>Package#</th>
+                        </thead>
+                        <tbody>
+                            <% if(typeof orders !== "undefined" ) { %>
+                            <% orders.forEach( (order)=>{ %>
+                                <tr>
+                                    <td> <%= order.cuser %></td>
+                                    <td> <%= order.item_name %></td>
+                                    <td> <%= order.price %></td>
+                                    <td> <%= order.qty %></td>
+                                    <td> <%= order.av_quantity %></td>
+                                    <td> <%= order.package_id %></td>
+                                </tr>
+                            <% }); %>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+<script>
+$(document).ready( function () {
+    $('#salesTable').DataTable();
+});
+</script>
+</body>
+
+<%- include partials/header %>

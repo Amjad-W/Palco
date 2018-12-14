@@ -1,11 +1,11 @@
 
 <%- include partials/header %>
 
-<body>
+<body style="overflow-y: auto;">
 
-	<div class="content">
+	<div>
 
-		<div class="container col" style="margin: 100px 0px;">
+		<div class="container col">
 
 			<div class="row  justify-content-md-center outerdiv" style="margin-bottom: 10px;">
 				<form action="/selection" method="POST" >
@@ -30,7 +30,7 @@
 				</form>
 			</div>
 			<div class="row justify-content-md-center outerdiv">
-				<table class="table table-bordered">
+				<table class="table table-bordered" id="adminTable">
 							<thead>
 								<% let columns = Object.keys(data[0]); %>
 										<tr>
@@ -39,6 +39,7 @@
 										<% }; %>
 										</tr>
 							</thead>
+								<% if(typeof data !== "undefined") { %>
 								<% data.forEach(function(data){ %>
 									<tbody>
 										<tr>
@@ -47,11 +48,18 @@
 										<% }; %>
 										</tr>
 								<% }); %>
+								<% } %>
 									</tbody>
 				</table>
 			</div>
 		</div>	
 	</div>
+
+	<script>
+$(document).ready( function () {
+    $('#adminTable').DataTable();
+});
+</script>
 </body>
  <%- include partials/footer %>
 

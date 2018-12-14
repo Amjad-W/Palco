@@ -1,0 +1,72 @@
+<%- include partials/header %>
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <ul class="list-group">
+                <li class="nav-item">
+                    <a href="/dash" class="nav-link" >User Profile</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/sales" class="nav-link" >Recent Purchases</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/curr_orders" class="nav-link" >Current Orders</a>
+                </li>
+                <% if(auth.access > 2)  { %>
+                <li class="nav-item">
+                    <a href="/report" class="nav-link" >Sales</a>
+                </li>
+                 <li class="nav-item">
+                    <a href="/admin" class="nav-link" >Admin Edit</a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="scroll" class="w-100">
+            <div class="content2">
+                <div class="col-md-12">
+                    <div class="header">
+                        <h4 class="title">Recent Purchases</h4>
+                    </div>
+                    <table class="table table-hover table-bordered table-responsive-md" id="salesTable">
+                        <thead>
+                            <th>Invoice#</th>
+                            <th>Item Name</th>
+                            <th>Quantity</th>
+                            <th>Item Price</th>
+                            <th>Subtotal</th>
+                            <th>Order Date</th>
+                        </thead>
+                        <tbody>
+                            <% orders.forEach( (order)=>{ %>
+                                <tr>
+                                    <td> <%= order.invoice_id %></td>
+                                    <td> <%= order.item_name %></td>
+                                    <td> <%= order.qty %></td>
+                                    <td> <%= order.price %></td>
+                                    <td> <%= order.subtotal %></td>
+                                    <td> <%= order.formated %></td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+<script>
+$(document).ready( function () {
+    $('#salesTable').DataTable();
+    $('#tableWrapper').hide();
+});
+</script>
+</body>
+
+<%- include partials/header %>

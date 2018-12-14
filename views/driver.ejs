@@ -1,0 +1,29 @@
+<%- include partials/header %>
+<body style="overflow-y: auto;">
+    <div class="content2" style="margin-bottom: auto;">
+        <div class="container">
+            <% if(Object.values(flash)[0]) {console.log(flash);%>
+                    <div class="col-md-6">
+                        <div class="alert alert-danger"> <%= flash[Object.keys(flash)[0]] %> </div>
+                    </div>
+            <% } %>
+            </div>
+            <div class="row">
+                <% if(Object.values(packs)[0]) {%>
+                <% packs.forEach((pack) =>{ %>
+                    <div class="col-md-4">
+                        <form class="form-inline" action="/driver" method="POST"style="margin: 5px;">
+                            <div class="row" style="margin-right: auto;">
+                                <input type="hidden"  value="<%= pack.package_id %>" name="packid" style="display:none">
+                                <button class="btn" type="submit" style="margin-right: 7px;">Take</button>
+                                <%= pack.package_id %>#
+                                <%= pack.ship_adr %>
+                            </div>
+                        </form>
+                    </div>
+                <% }); %>
+                <% } %>
+            </div>
+        </div>
+</body>
+<%- include partials/footer %>

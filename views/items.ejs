@@ -1,10 +1,10 @@
 <%- include partials/header %>
-
-<div class="content2">
+<body style="overflow-y:auto;">
+<div class="content2" >
 <h1> List of Items </h3>
     <div class="row">
             <div class="col-sm-1"></div>
-            <form method="POST" action="/order">
+            <form method="POST" action="/pass_para">
             <div class="form-group" style="display: flex;">
                 <div class="input-group">
                     <select class="custom-select" name="filter">
@@ -24,6 +24,9 @@
                         <button class="input-group-text" type="submit">Go</label>
                     </div>
                 </div>
+                <div class="input-group" style="margin-left: 5px;">
+                    <input class="form-control" type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for items...">
+                </div>
             </div>
             </form>
     </div>
@@ -31,7 +34,7 @@
 
     <div class="row">
         <% result.forEach((result)=>{ %>
-            <div class="card-deck col-sm-6 col-md-4 col-lg-4 text-center">
+            <div class="card-deck col-sm-4 col-md-3 col-lg-3 text-center">
                 <div class="card" style="width: 18rem;">
                     <img class="card-img-top img-fluid" src="items/<%= result.img_path %>" alt="Card image cap">
                     <div class="card-body">
@@ -39,9 +42,16 @@
                         <p class="card-text"><%= result.price %>$</p>
                     </div>
                     <div class="card-footer">
-                        <form method="post" action="/items" class="form-inline justify-content-center">
-                            <input type="number" class="form-control text-center" value="0" style="width: 20%">
+                        <form method="post" action="/order" name="order-qty" class="form-inline justify-content-center">
+                            <% if(typeof invalid_id !== 'undefined' && result.item_id == invalid_id){ var is_invalid = "is-invalid"; } %>
+                            <input type="hidden" name="item_id" value="<%= result.item_id %>">
+                            <input type="hidden" name="price" value="<%= result.price %>">
+                            <input type="hidden" name="av_qty" value="<%= result.av_quantity %>">
+                            <input type="number" min="0" class="form-control text-center w-25 <%= is_invalid %> " value="0" name="qty">
                             <button type="submit" class="btn btn-primary">Add to Cart</i> </button>
+                            <% if(typeof cart_error !== 'undefined') { %>
+                                    <div class="invalid-feedback"> <%= cart_error.cart_error %></div>
+                            <% } %>
                         </form>
                             <small class="text-muted">In Stock: <%= result.av_quantity %></small>
                     </div>
@@ -50,5 +60,27 @@
         <% }); %>
     </div>
 </div>
+<form action="/cart" method="get">
+<button class="btn btn-success" id="cartButton"><i class="fa fa-shopping-cart"></i> Cart</button>
+</form>
+</body>
 
+<script>
+function myFunction(){
+    input = $("#myInput").val().toUpperCase();
+    item_name = $('.card-body p:first-child');
+    card = $('.card-deck');
+    
+    for(let i = 0; i < item_name.length;i++){
+        value = item_name[i].innerText;
+        if(value.toUpperCase().indexOf(input) > -1)
+        {
+            card[i].style.display = "";
+        }else{
+            card[i].style.display = "none";
+        }
+    }
+
+}
+</script>
 <%- include partials/footer %>

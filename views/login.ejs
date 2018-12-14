@@ -2,31 +2,32 @@
 
 <div class="container d-flex justify-content-center align-items-center" id="login-wrapper" >
 	<div class="col-md-6 login-border">
-	<h2 class="text-center"> Login Now </h2>
-	<form action="/login" method="POST">
+		<h2 class="text-center"> Login Now </h2>
+		<form action="/login" method="POST">
 
-		<div class="form-group">
-			<label class="text-uppercase">Username</label>
-			<input type="text" class="form-control" name="user" placeholder="">
-		</div>
+			<div class="form-group">
+				<label class="text-uppercase">Username</label>
+				<input type="text" class="form-control" name="user" placeholder="">
+			</div>
 
-		<div class="form-group">
-			<label class="text-uppercase">Password</label>
-			<input type="password" class="form-control" name="password" placeholder="">
-		</div>
-			<small> Not registered? <a href="/register"> Register now ! </a> </small>
+			<div class="form-group">
+				<label class="text-uppercase">Password</label>
+				<input type="password" class="form-control" name="password" placeholder="">
+			</div>
+				<small> Not registered? <a href="/register"> Register now ! </a> </small>
+			<div class="form-check">
+				<label class="form-check-label">
+				<button type="submit" class="btn btn-login float-right">Submit</button>
+			</div>
 
-		<div class="form-check">
-			<label class="form-check-label">
-			<button type="submit" class="btn btn-login float-right">Submit</button>
-		</div>
-
-		
-
-	</form>
+		</form>
+		<% if(Object.values(flash)[0]) { %>
+			<div class="col-md-12">
+				<div class="alert alert-danger"> <%= flash[Object.keys(flash)[0]] %> </div>
+			</div>
+		<% } %>
 	</div>
 </div>
 
 
-
-<%- include partials/footer %>
+</html>

@@ -1,0 +1,97 @@
+<%- include partials/header %>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <ul class="list-group">
+                <li class="nav-item">
+                    <a href="/dash" class="nav-link" >User Profile</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/sales" class="nav-link" >Recent Purchases</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/curr_orders" class="nav-link" >Current Orders</a>
+                </li>
+                <% if(auth.access > 2)  { %>
+                <li class="nav-item">
+                    <a href="/report" class="nav-link" >Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link" >Admin Edit</a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="scroll" class="w-100">
+        <div class="content2">
+            <div class="header">
+                <h2>Userprofile</h2>
+            </div>
+            <div class="col-md-12">
+                <form method="POST" action="/editprofile">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Username</label>
+                                <input type="text" name="cuser" class="form-control" value="<%= auth.cuser %>">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <input type="email" name="email" class="form-control" value="<%= auth.email %>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" name="ship_addr" class="form-control" placeholder="Home Address" value="<%= auth.ship_addr %>">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="text" name="phone"class="form-control" value="<%= auth.phone %>">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Virtual Bank</label>
+                                <input type="number" name="bank" class="form-control" value="<%= auth.bank %>">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-info btn-fill pull-right">Update Profile</button>
+                    <div class="clearfix"></div>
+                </form>
+
+                <hr size="10px">
+                <% if(typeof errors != "undefined") { %>
+                    <div class="row">
+                    <% errors.forEach( (error)=>{ %>
+                    <div class="col-md-4">
+			            <div class="alert alert-danger"> <%= error.msg %> </div>
+		            </div> 
+                    <% }); %>
+                <% } %>
+                <% if(typeof flash !== 'undefined' && Object.keys(flash).length > 0) {%>
+                    <div class="col-md-3">
+                        <div class="alert alert-success"> <%= flash[Object.keys(flash)[0]] %> </div>
+                    </div>
+	            <% } %>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<%- include partials/header %>

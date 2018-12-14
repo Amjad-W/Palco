@@ -1,0 +1,63 @@
+<%- include partials/header %>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar  -->
+        <nav id="sidebar">
+            <ul class="list-group">
+                <li class="nav-item">
+                    <a href="/dash" class="nav-link" >User Profile</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/sales" class="nav-link" >Recent Purchases</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/curr_orders" class="nav-link" >Current Orders</a>
+                </li>
+                <% if(auth.access > 2)  { %>
+                <li class="nav-item">
+                    <a href="/report" class="nav-link" >Sales</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/admin" class="nav-link" >Admin Edit</a>
+                </li>
+                <% } %>
+            </ul>
+        </nav>
+
+        <!-- Page Content  -->
+        <div id="scroll" class="w-100">
+        <div class="content2">
+            <div class="header">
+                <h2>Current Orders</h2>
+            </div>
+            <div class="col-md-12">
+                <% if(Object.values(orders)[0]) {console.log(orders);%>
+                    <table class="table table-bordered table-responsive-md"> 
+                        <thead>
+                            <th>Invoice#</th>
+                            <th>Package#</th>
+                            <th>Order Date</th>
+                            <th>Estimated Date</th>
+                        </thead>
+                        <tbody>
+                    <% orders.forEach((order)=>{ console.log(orders);%>
+                        <tr>
+                            <td><%= order.invoice_id %></td>
+                            <td><%= order.package_id %></td>
+                            <td><%= order.order_date %></td>
+                            <td><%= order.estimated_date %></td>
+                        </tr>
+                        </div>
+                    <% }); %>
+                        </tbody>
+                    </table>
+                    <small> Please refer to 'Recent Purchases' for item details </small>
+                <% } %>
+            <hr size="10px">
+            </div>
+        </div>
+    </div>
+
+</body>
+
+<%- include partials/header %>

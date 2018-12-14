@@ -1,6 +1,8 @@
 <%- include partials/header %>
-<div class="content2">
-<div class="container">
+
+<body style="overflow-y: auto;">
+<div class="content2 border">
+<div id="cart" class="container" >
 	<table id="cart" class="table table-hover table-condensed">
     				<thead>
 						<tr>
@@ -12,39 +14,59 @@
 						</tr>
 					</thead>
 					<tbody>
+					<% cart.items.forEach( (item) => {%>
 						<tr>
 							<td data-th="Product">
 								<div class="row">
-									<div class="col-sm-4 hidden-xs"><img src="http://placehold.it/100x100" alt="..." class="img-responsive"/></div>
+									<div class="col-sm-4 d-none d-md-block"><img src="items/<%= item.img_path %>" alt="..." class="img-responsive"/></div>
 									<div class="col-sm-8">
-										<h4 class="nomargin">Product 1</h4>
-										<p>Quis aute iure reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Lorem ipsum dolor sit amet.</p>
+										<h4> <%= item.item_name %></h4>
 									</div>
 								</div>
 							</td>
-							<td data-th="Price">$1.99</td>
+							<td data-th="Price">$<%= item.price %></td>
+								<form id="refresh_form" method="post" action="/cart/refresh">
 							<td data-th="Quantity">
-								<input type="number" class="form-control text-center" value="1">
+								<input type="number" min="0" class="form-control text-center" name="qty" value="<%= item.qty %>">
 							</td>
-							<td data-th="Subtotal" class="text-center">1.99</td>
+							<td data-th="Subtotal" class="text-center">$<%= item.subtotal %></td>
 							<td class="actions" data-th="">
-								<button class="btn btn-info btn-sm"><i class="fa fa-refresh"></i></button>
-								<button class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>								
+									<button class="btn btn-info btn-sm"><i class="fa fa-refresh"></i></button>
+									<input type="hidden" name="id" value="<%= item.item_id %>">
+								</form>								
+								<form method="post" action="/cart/delete">
+									<button class="btn btn-danger btn-sm"><i class="fa fa-trash-o"></i></button>
+									<input type="hidden" name="id" value="<%= item.item_id %>">
+									<input type="hidden" name="qty" value="<%= item.qty %>">
+								</form>								
 							</td>
 						</tr>
+						<% }); %>
 					</tbody>
 					<tfoot>
 						<tr class="visible-xs">
-							<td class="text-center"><strong>Total 1.99</strong></td>
+							<td class="text-center"><strong>Total $<%= cart.totals %></strong></td>
 						</tr>
 						<tr>
 							<td><a href="/order" class="btn btn-warning"><i class="fa fa-angle-left"></i> Continue Shopping</a></td>
 							<td colspan="2" class="hidden-xs"></td>
-							<td class="hidden-xs text-center"><strong>Total $1.99</strong></td>
-							<td><a href="/checkout" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a></td>
+							<td class="hidden-xs text-center"><strong>Total $<%= cart.totals %></strong></td>
+							<td>
+								<form method="POST" action="/cart">
+									<button class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></button>
+									<% if(Object.keys(flash).length !== 0){%>
+									<% let validity = (Object.keys(flash)[0] == "succ") ? "valid" : "invalid"; %> 
+									 <div class="<%= validity %>-feedback" style="display: block;">
+									 	<%= flash[Object.keys(flash)[0]] %>
+									 </div>
+									<% } %>
+								</form>
+							</td>
 						</tr>
 					</tfoot>
 				</table>
 </div>
 </div>
+
+</body>
 <%- include partials/footer %>
