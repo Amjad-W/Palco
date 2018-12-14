@@ -10,11 +10,6 @@ const LocalStrategy = require("passport-local");
 const validator = require("express-validator");
 const app = express();
 
-//Variables
-var selected = 0;
-var filter = 0;
-var sort_item = "item_name";
-
 //View Engine
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -28,6 +23,24 @@ app.use(passport.session());
 app.use(flash({locals: 'flash'}));
 app.use(validator());
 
+
+app.use( (req,res,next) => {
+    if(!req.session.cart) {
+    req.session.cart = {
+        items: [],
+        totals: 0.00,
+    }}
+    if(!req.session.selected )
+    req.session.selected = 0;
+    
+    if(!req.session.filter)
+    req.session.filter = 0;
+    
+    if(!req.session.sort_item )
+    req.session.sort_item = "item_name";
+
+    next();
+});
 //SQL Connection
 const db = mysql.createConnection({
     host: "localhost",
@@ -44,26 +57,14 @@ db.connect((err) => {
     }
 });
 
-var tables = [];
-db.query("SHOW TABLES", (err,results) => {
-    for(i in results){
-        tables = tables.concat(Object.values( results[i] ) );
-    }
-});
-
-var brands = {};
-db.query("SELECT * FROM brand", (err,results) => {
-    brands = results;
-});
 
 //Passport.js
-
 app.use(function(req,res,next){
     res.locals.regsucc = req.flash('regsucc');
     res.locals.regfail = req.flash('reqfail');
+    res.locals.login = req.flash('login');
 next();
 });
-
   // used to serialize the user for the session
   passport.serializeUser(function(user, done) {
     done(null, user.customer_id);
@@ -73,7 +74,6 @@ next();
 passport.deserializeUser(function(customer_id, done) {
     let sql = "select * from customer where customer_id = ?"
     db.query(sql,customer_id, function(err,rows){
-        console.log("test: "+rows[0].cuser);
         done(err, rows[0]);
     });
 });
@@ -102,24 +102,8 @@ passport.use(new LocalStrategy({
     });
 }));
 
-//Routes
-app.get("/",(req,res) => {
-    if(req.user)
-    res.render("home", {auth: req.user});
-    else
-    res.render("login");
-});
-
-app.get("/admin",(req,res) => {
-    let sql = "SELECT * FROM " + tables[selected];
-    db.query(sql, (err,datares) =>{
-        if(err) 
-            console.log(err);
-        else{
-                res.render('admin',{tables: tables, data: datares});
-            }
-        });
-});
+//--------------------------------------Routes----------------------------------------
+//Post-Routes
 
 app.post("/login", passport.authenticate('local', {
     successRedirect: '/',
@@ -170,50 +154,101 @@ app.post("/register", (req,res) => {
 });
 
 app.post("/selection", (req,res) => {
-    selected = parseInt(req.body.selection);
+    req.selection.selected = parseInt(req.body.selection);
     backURL=req.header('Referer') || '/';
     res.redirect(backURL);
 });
 
 app.post("/new", (req,res) =>{
-    let sql = "INSERT INTO "+ tables[selected] +" SET ?";
-    let query = db.query(sql,req.body, (err,result) => {
-            if(err) console.log( err);
-            else {
-                res.redirect("/");
-            }
+        var tables = [];
+        db.query("SHOW TABLES", (err,results) => {
+        for(i in results){
+            tables = tables.concat(Object.values( results[i] ) );
+        }
+        let sql = "INSERT INTO "+ tables[req.session.selected] +" SET ?";
+        db.query(sql,req.body, (err,result) => {
+                if(err) console.log( err);
+                else {
+                    res.redirect("/");
+                }
+            });
+        });
+});
+
+//Get-Routes
+app.get("/",(req,res) => {
+    if(req.user)
+    res.render("home", {auth: req.user});
+    else
+    res.render("login");
+});
+
+app.get("/admin",(req,res) => {
+        var tables = [];
+        let query = db.query("SHOW TABLES", (err,results) => {
+        for(i in results){
+            tables = tables.concat(Object.values( results[i] ) );
+        }
+        let sql = "SELECT * FROM " + tables[req.session.selected];
+        db.query(sql, (err,datares) =>{
+            if(err) 
+                console.log(err);
+            else{
+                    res.render('admin',{tables: tables, data: datares});
+                }
+            });
         });
 });
 
 app.get("/register", (req,res)=>{
-    let sql = "select * from customer where customer_id = 1";
-    let query = db.query(sql,(err,result)=>{
-        if(err) console.log(err);
-        else res.render("register");
+    // let sql = "select * from customer where customer_id = 1";
+    // let query = db.query(sql,(err,result)=>{
+    //     if(err) console.log(err);
+    //     else res.render("register");
+    // });
+    if(typeof req.user != "undefined"){
+        req.flash("login","You are already logged in");
+        res.render("register",{auth: req.user, flash: res.locals.flash});
+        }
+    else
+        res.render("register");
+});
+
+app.get("/cart", (req,res)=>{
+    res.render("cart",
+    {
+        auth: req.user,
+        cart: req.session.cart
     });
 });
 
 app.get("/order", (req,res)=>{
     let sql = 0;
-    if(filter == 0){
-        sql = "SELECT * FROM item ORDER BY " + sort_item;
+    if(req.session.filter == 0){
+        sql = "SELECT * FROM item ORDER BY " + req.session.sort_item;
 
     }
     else{
-        sql = "SELECT * FROM item " + "WHERE brand_id = " + filter + " ORDER BY " + sort_item;
+        sql = "SELECT * FROM item " + "WHERE brand_id = " + req.session.filter + " ORDER BY " + req.session.sort_item;
     }
         db.query(sql, (err,result) =>{
             if(err) console.log(err);
             else{
-                res.render("items",{result: result, brand: brands,auth: req.user});
-            }
+                var brands;
+                    db.query("SELECT * FROM brand", (err,results) => {
+                        brands = results;
+                        res.render("items",{result: result, 
+                                            brand: brands,
+                                            auth: req.user});
+                    });
+                }   
         }); 
 
 });
 
 app.post("/order", (req,res) => {
-        filter = (req.body.filter==null) ? 0 : req.body.filter
-        sort_item = (req.body.sort==null) ? "item_name" : req.body.sort
+    req.session.filter = (req.body.filter==null) ? 0 : req.body.filter
+    req.session.sort_item = (req.body.sort==null) ? "item_name" : req.body.sort
     backURL=req.header('Referer') || '/';
     res.redirect(backURL);
 });

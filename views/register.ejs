@@ -2,6 +2,7 @@
 
 <div class="container d-flex justify-content-center align-items-center" style="min-height: calc(100vh - 100px)">
 	<div class="col-md-6 login-border">
+	<% if(typeof auth == "undefined") { %>
 	<h2 class="text-center"> Registration Form</h2>
 	<form action="/register" method="POST">
 
@@ -36,21 +37,16 @@
 		</div>
 
 	</form>
+	<% } else {%>
+			<div class="alert alert-danger"> <%= flash[Object.keys(flash)[0]] %> </div>
+	<% } %>
 	</div>
-	<% if(typeof errors !== 'undefined'){ %>
-		<div class="col-md-3">
-		<% errors.forEach( (err)=>{ %>
-		<div class="alert alert-danger"> <%= err.msg %> </div>
-		<% }) %>
-		</div>
-		<% } %>
-		
-		<% if(flash) {%>
+		<% if(typeof flash !== 'undefined' && Object.keys(flash).length > 0) {%>
 		<% let alerttype = (Object.keys(flash)[0] == "regsucc") ? "alert-success" : "alert-danger"; %> 
 		<div class="col-md-3">
 			<div class="alert <%= alerttype %>"> <%= flash[Object.keys(flash)[0]] %> </div>
 		</div>
-		<% } %>
+	<% } %>
 </div>
 
 
